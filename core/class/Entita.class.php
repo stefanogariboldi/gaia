@@ -127,7 +127,7 @@ class Entita {
         return true;
     }
     
-    public static function filtra($_array, $_order = null) {
+    public static function xfiltra($_array, $_order = null) {
         global $db, $conf, $cache;
         $entita = get_called_class();
         $_condizioni = [];
@@ -162,15 +162,18 @@ class Entita {
             $r = static::_ottieniQuery($hash);
             if ( $r !== false  ) {
                 $cache->increment($conf['db_hash'] . '__re');
-                return $r;
+                foreach ( $r as $_r ) {
+                    yeld $_r;
+                }
+                return;
             }
         }
         
         $q = $db->prepare($query);
         $q->execute();
-        $t = [];
         while ( $r = $q->fetch(PDO::FETCH_NUM) ) {
-            $t[] = new $entita($r[0]);
+            yeld (new $entita($r[0]));
+
         }
         
         /*
@@ -180,11 +183,19 @@ class Entita {
             static::_cacheQuery($hash, $t);
         }
         
-        return $t;
+        return;
     }
-    
+
+    public static function filtra($_array, $_order = null) {
+        return carica( static::filtra($_array, $_order) );
+    }
+
     public static function elenco($ordine = '') {
         return static::filtra([], $ordine);
+    }
+
+    public static function xelenco($ordine = '') {
+        return static::xfiltra([], $ordine);
     }
     
     public static function cercaFulltext($query, $campi, $limit = 20, $altroWhere = '') {
