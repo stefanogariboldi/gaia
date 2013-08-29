@@ -163,7 +163,7 @@ class Entita {
             if ( $r !== false  ) {
                 $cache->increment($conf['db_hash'] . '__re');
                 foreach ( $r as $_r ) {
-                    yeld $_r;
+                    yield $_r;
                 }
                 return;
             }
@@ -172,7 +172,7 @@ class Entita {
         $q = $db->prepare($query);
         $q->execute();
         while ( $r = $q->fetch(PDO::FETCH_NUM) ) {
-            yeld (new $entita($r[0]));
+            yield new $entita($r[0]);
 
         }
         
@@ -187,7 +187,7 @@ class Entita {
     }
 
     public static function filtra($_array, $_order = null) {
-        return carica( static::filtra($_array, $_order) );
+        return carica( static::xfiltra($_array, $_order) );
     }
 
     public static function elenco($ordine = '') {

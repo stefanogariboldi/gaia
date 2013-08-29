@@ -8,6 +8,6 @@
 /**
  * Carica il contenuto dell'iteratore in un array
  */
-public function carica( $iteratore ) {
+function carica( &$iteratore ) {
 	return iterator_to_array($iteratore);
 }
