@@ -290,6 +290,26 @@ $conf['att_stato'] = [
 
 /*
  * ===================================
+ * =========== PROVVEDIMENTI =========
+ * ===================================
+ */
+
+/* Tipologia richieste patente */
+define('PROVV_RICHIAMO',    10);
+define('PROVV_AMMONIZIONE', 20);
+define('PROVV_SOSPENSIONE', 30);
+define('PROVV_ESPULSIONE',  40);
+
+/* Definizioni in stringa */
+$conf['patente'] = [
+    PROVV_RICHIAMO      =>  'Richiamo verbale',
+    PROVV_AMMONIZIONE   =>  'Ammonizione scritta',
+    PROVV_SOSPENSIONE   =>  'Sospensione',
+    PROVV_ESPULSIONE    =>  'Espulsione'
+];
+
+/*
+ * ===================================
  * =========== OBIETTIVI STRATEGICI ==
  * ===================================
  */
@@ -558,7 +578,7 @@ $conf['dizionario'] = [
 
 /*
  * ===================================
- * =========== PRVACY ================
+ * =========== PRIVACY ===============
  * ===================================
  */
 
