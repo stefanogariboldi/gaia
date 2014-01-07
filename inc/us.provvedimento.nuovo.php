@@ -24,6 +24,16 @@ paginaModale();
                   Seleziona un volontario... <i class="icon-pencil"></i>
                     </a><p></p>
                </li>
+               <li>
+                <div class="controls">
+                  <select class="input-large" id="inputTipo" name="inputTipo">
+                    <?php
+                      foreach ( $conf['provvedimenti'] as $numero => $tipo ) { ?>
+                        <option value="<?php echo $numero; ?>"><?php echo $tipo; ?></option>
+                    <?php } ?>
+                  </select>   
+                </div>
+               </li>
                <li><input class="input-large allinea-sinistra" type="text" name="datainizio" id="datainizio" placeholder="Inserisci data di inizio provvedimento" autocomplete="off" required></li>
                <li><input class="input-large allinea-sinistra" type="text" name="datafine" id="datafine" placeholder="Inserisci data di fine provvedimento" autocomplete="off" required></li>
                <li><input class="span4 allinea-sinistra" type="text" name="inputMotivo" id="motivo" placeholder="Inserisci la motivazione" required></li>

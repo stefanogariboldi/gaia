@@ -46,6 +46,18 @@ $_n     +=  $_n_app    = $me->numAppPending     ([APP_PRESIDENTE, APP_SOCI]);
                 <p>L'operazione che stavi tentando di eseguire non è andata a buon fine. Per favore riprova.</p>
             </div> 
             <?php } ?>
+            <?php if (isset($_GET['date'])) { ?>
+            <div class="alert alert-block alert-error">
+                <h4><i class="icon-warning-sign"></i> <strong>Errore data</strong>.</h4>
+                <p>La data di inizio è antecedente la data di fine.</p>
+            </div> 
+            <?php } ?>
+            <?php if ( isset($_GET['provok']) ) { ?>
+            <div class="alert alert-success">
+                <i class="icon-ok"></i> <strong>Provvedimento registrato con successo</strong>.
+                Il provvedimento disciplinare è stato registrato con successo.
+            </div>
+            <?php } ?>
             <div class="span12">
                 <h3>Ufficio Soci</h3>
             </div>

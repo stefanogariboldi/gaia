@@ -301,7 +301,7 @@ define('PROVV_SOSPENSIONE', 30);
 define('PROVV_ESPULSIONE',  40);
 
 /* Definizioni in stringa */
-$conf['patente'] = [
+$conf['provvedimenti'] = [
     PROVV_RICHIAMO      =>  'Richiamo verbale',
     PROVV_AMMONIZIONE   =>  'Ammonizione scritta',
     PROVV_SOSPENSIONE   =>  'Sospensione',
