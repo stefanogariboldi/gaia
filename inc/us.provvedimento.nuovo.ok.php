@@ -28,7 +28,7 @@ $p->tipo         = $_POST['inputTipo'];
 $p->appartenenza = $v->appartenenzaAttuale();
 $p->motivo       = $m;    
 $p->pConferma    = $me;
-$p->tConferma    = $time;
+$p->tConferma    = time();
 $p->protNumero   = $_POST['protNum']; 
 
 if ( $_POST['datainizio'] ) {
@@ -60,7 +60,7 @@ if ( $_POST['protData'] ) {
 
 if ($_POST['inputTipo'] == PROVV_ESPULSIONE){
     //dimissione automatica del volontario
-    $v->dimettiVolontario(DIM_RADIAZIONE,$m,$me);
+    $v->dimettiVolontario(DIM_RADIAZIONE, $m, $me, $p->inizio);
 }
 
 redirect('us.dash&provok');

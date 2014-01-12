@@ -1176,7 +1176,7 @@ class Utente extends Persona {
      * @param $motivo, motivazione di dimissione
      * @param $info default NULL, informazioni aggiuntive sulla dimissione
      */
-    public function dimettiVolontario($motivo,$info=NULL,$chi) {
+    public function dimettiVolontario($motivo, $info=NULL, $chi, $quando) {
         $v = $this->volontario();
         $attuale = $v->appartenenzaAttuale();
         $comitato = $attuale->comitato();
