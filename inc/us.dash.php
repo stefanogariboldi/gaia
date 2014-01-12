@@ -115,6 +115,10 @@ $_n     +=  $_n_app    = $me->numAppPending     ([APP_PRESIDENTE, APP_SOCI]);
                             <i class="icon-pause"></i>
                             Metti in riserva volontario
                         </a>
+                        <a href="?p=us.provvedimento.nuovo" class="btn btn-block btn-primary">
+                            <i class="icon-legal"></i>
+                            Registra provvedimento disciplinare
+                        </a>
                     </div>
                 </div>
             </div>
