@@ -84,4 +84,3 @@ proteggiDatiSensibili($v, [APP_SOCI, APP_PRESIDENTE]);
         </div>        
     </div>
 </div>
-
