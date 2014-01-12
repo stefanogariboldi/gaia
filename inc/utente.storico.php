@@ -12,16 +12,16 @@ paginaPrivata();
     </div>
     <div class="span9">
         <?php if ( isset($_GET['ester']) ) { ?>
-        <div class="alert alert-success">
-            <i class="icon-save"></i> <strong>Estensione Terminata</strong>.
-            La tua estensione è stata terminata con successo.
-        </div>
+            <div class="alert alert-success">
+                <i class="icon-save"></i> <strong>Estensione Terminata</strong>.
+                La tua estensione è stata terminata con successo.
+            </div>
         <?php } ?>
         <?php if ( isset($_GET['rister']) ) { ?>
-        <div class="alert alert-success">
-            <i class="icon-save"></i> <strong>Riserva Terminata</strong>.
-            La tua riserva è stata terminata con successo.
-        </div>
+            <div class="alert alert-success">
+                <i class="icon-save"></i> <strong>Riserva Terminata</strong>.
+                La tua riserva è stata terminata con successo.
+            </div>
         <?php } ?>
         <div class="row-fluid">
             <h2>
@@ -296,9 +296,9 @@ paginaPrivata();
             <th>Comitato</th>
             <th>Inizio</th>
             <th>Fine</th>
-            <th>Motivo</th>
             <th>Prot. Num.</th>
-            <th>Prot. Data</th>
+            <th>Prot. Data</th>            
+            <th>Motivo</th>
         </thead>
         
         <?php foreach ( $me->storicoProvvedimenti() as $prov ) { ?>
@@ -317,13 +317,13 @@ paginaPrivata();
                 
         <td>
             <i class="icon-calendar muted"></i>
-            <?php echo $app->inizio()->inTesto(false); ?>
+            <?= $app->inizio()->inTesto(false); ?>
         </td>
         
         <td>
             <?php if ($app->fine) { ?>
             <i class="icon-time muted"></i>
-            <?php echo $app->fine()->inTesto(false); ?>
+            <?= $app->fine()->inTesto(false); ?>
             <?php } else { ?>
             <i class="icon-question-sign muted"></i>
             Indeterminato
@@ -331,16 +331,16 @@ paginaPrivata();
         </td>
 
         <td>
-            <?= $prov->motivo; ?>
-        </td>
-
-        <td>
-            <?= $prov->motivo; ?>
+            <?= $prov->protNumero; ?>
         </td>
 
         <td>
             <i class="icon-calendar muted"></i>
             <?= date('d/m/Y', $prov->protData); ?>
+        </td>
+
+        <td>
+            <?= $prov->motivo; ?>
         </td>
 
     </tr>
