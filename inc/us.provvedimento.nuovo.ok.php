@@ -23,11 +23,13 @@ $m = $_POST['inputMotivo'];
 /*Avvio la procedura*/
 
 $p = new Provvedimento();
-$p->volontario = $v->id;
-$p->tipo = $_POST['inputTipo'];
+$p->volontario   = $v->id;
+$p->tipo         = $_POST['inputTipo'];
 $p->appartenenza = $v->appartenenzaAttuale();
-$p->motivo = $m;    
-$p->protNum = $_POST['protNum']; 
+$p->motivo       = $m;    
+$p->pConferma    = $me;
+$p->tConferma    = $time;
+$p->protNumero   = $_POST['protNum']; 
 
 if ( $_POST['datainizio'] ) {
     if ( $inizio ) {
@@ -54,6 +56,11 @@ if ( $_POST['protData'] ) {
     } else {
         $p->protData = 0;
     }
+}
+
+if ($_POST['inputTipo'] == PROVV_ESPULSIONE){
+    //dimissione automatica del volontario
+    $v->dimettiVolontario(DIM_RADIAZIONE,$m,$me);
 }
 
 redirect('us.dash&provok');

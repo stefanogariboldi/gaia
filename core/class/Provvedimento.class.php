@@ -1,6 +1,6 @@
 <?php
 
-class Provvedimenti extends Entita {
+class Provvedimento extends Entita {
         
     protected static
         $_t  = 'provvedimenti',

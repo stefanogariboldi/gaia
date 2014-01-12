@@ -9,9 +9,9 @@ class Dimissione extends Entita {
             $_t  = 'dimissioni',
             $_dt = null;
         
-        public function dimetti() {
+        public function dimetti($chi) {
             $this->tConferma  = time();
-            $this->pConferma  = $me;
+            $this->pConferma  = $chi;
         }
 
         public function comitato() {
