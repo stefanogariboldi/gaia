@@ -87,7 +87,7 @@ foreach($comitati as $comitato){
         <?php if($_t->protNumero){ ?>
         <td>
             <div class="btn-group">
-                <a class="btn btn-primary" target="_new" href="?p=presidente.riserva.storico&id=<?php echo $_v->id; ?>">
+                <a class="btn btn-primary" target="_new" href="?p=presidente.riserve.storico&id=<?php echo $_v->id; ?>">
                     <i class="icon-time"></i> Riserve
                 </a>
                 <a class="btn btn-success" href="?p=presidente.riserva.ok&id=<?php echo $_t->id; ?>&si">

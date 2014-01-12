@@ -302,51 +302,51 @@ paginaPrivata();
         </thead>
         
         <?php foreach ( $me->storicoProvvedimenti() as $prov ) { ?>
-        <tr<?php if ($prov->fine >= time() || $prov->fine == 0 ) { ?> class="success"<?php } ?>>
-        <td>
-            <?php if ($prov->fine >= time() || $prov->fine == 0 ) { ?>
-            Attuale
-            <?php } else { ?>
-            Passato
-            <?php } ?>
-        </td>
-        
-        <td>
-            <?= $prov->comitato()->nomeCompleto(); ?>
-        </td>
+            <tr<?php if ( $prov->fine >= time() || $prov->fine == 0 ) { ?> class="success"<?php } ?>>
+                <td>
+                    <?php if ($prov->fine >= time() || $prov->fine == 0 ) { ?>
+                        Attuale
+                    <?php } else { ?>
+                        Passato
+                    <?php } ?>
+                </td>
                 
-        <td>
-            <i class="icon-calendar muted"></i>
-            <?= $app->inizio()->inTesto(false); ?>
-        </td>
-        
-        <td>
-            <?php if ($app->fine) { ?>
-            <i class="icon-time muted"></i>
-            <?= $app->fine()->inTesto(false); ?>
-            <?php } else { ?>
-            <i class="icon-question-sign muted"></i>
-            Indeterminato
-            <?php } ?>
-        </td>
+                <td>
+                    <?= $prov->comitato()->nomeCompleto(); ?>
+                </td>
+                        
+                <td>
+                    <i class="icon-calendar muted"></i>
+                    <?= date('d/m/Y', $prov->inizio); ?>
+                </td>
+                
+                <td>
+                    <?php if ($prov->fine) { ?>
+                        <i class="icon-time muted"></i>
+                        <?= date('d/m/Y',$prov->fine); ?>
+                    <?php } else { ?>
+                        <i class="icon-question-sign muted"></i>
+                        Indeterminato
+                    <?php } ?>
+                </td>
 
-        <td>
-            <?= $prov->protNumero; ?>
-        </td>
+                <td>
+                    <?= $prov->protNumero; ?>
+                </td>
 
-        <td>
-            <i class="icon-calendar muted"></i>
-            <?= date('d/m/Y', $prov->protData); ?>
-        </td>
+                <td>
+                    <i class="icon-calendar muted"></i>
+                    <?= date('d/m/Y', $prov->protData); ?>
+                </td>
 
-        <td>
-            <?= $prov->motivo; ?>
-        </td>
+                <td>
+                    <?= $prov->motivo; ?>
+                </td>
 
-    </tr>
-    <?php } ?>
+            </tr>
+        <?php } ?>
     
-</table>
+    </table>
 </div>
 <?php } ?>
 
