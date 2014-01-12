@@ -466,6 +466,10 @@ class Utente extends Persona {
         foreach ( TitoloPersonale::filtra([['volontario',$this]]) as $g ) {
             $g->cancella();
         }
+        // 14. Provvedimenti
+        foreach ( $this->storicoProvvedimenti() as $g ) {
+            $g->cancella();
+        }
         parent::cancella();
     }
     
@@ -1159,5 +1163,11 @@ class Utente extends Persona {
             return "Nell'ultimo mese";
         }
         return "Più di un mese fà";
+    }
+
+    public function storicoProvvedimenti() {
+        return Provvedimenti::filtra([
+            ['volontario', $this->id]
+        ], 'INIZIO DESC');
     }
 }

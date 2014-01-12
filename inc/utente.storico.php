@@ -94,7 +94,7 @@ paginaPrivata();
     </div>
     
     <div class="row-fluid">
-        
+
         <table class="table table-bordered table-striped">
             <thead>
                 <th>N.</th>
@@ -111,7 +111,10 @@ paginaPrivata();
                 <td><?= $_q->volontario()->nome; ?></td>
                 <td><?= $_q->volontario()->cognome; ?></td>
                 <td><?= $_q->comitato()->nomeCompleto(); ?></td>
-                <td><?= date('d/m/Y', $_q->timestamp); ?></td>
+                <td>
+                    <i class="icon-calendar muted"></i>
+                    <?= date('d/m/Y', $_q->timestamp); ?>
+                </td>
                 <td><?= $_q->quota ,"€"; ?></td>
                 <td>
                     <a class="btn btn-small btn-info" href="?p=us.quote.ricevuta&id=<?= $_q->id; ?>" title="Visualizza ricevuta">
@@ -134,7 +137,7 @@ paginaPrivata();
     </div>
     
     <div class="row-fluid">
-        
+
         <table class="table table-bordered table-striped">
             <thead>
                 <th>Stato</th>
@@ -201,7 +204,7 @@ paginaPrivata();
 </div>
 
 <div class="row-fluid">
-    
+
     <table class="table table-bordered table-striped">
         <thead>
             <th>Stato</th>
@@ -276,5 +279,76 @@ paginaPrivata();
 </table>
 </div>
 <?php } ?>
+<?php if ( $me->storicoProvvedimenti() ) { ?>
+<div class="row-fluid">
+    <h2>
+        <i class="icon-legal muted"></i>
+        Provvedimenti
+    </h2>
+    
+</div>
+
+<div class="row-fluid">
+    
+    <table class="table table-bordered table-striped">
+        <thead>
+            <th>Stato</th>
+            <th>Comitato</th>
+            <th>Inizio</th>
+            <th>Fine</th>
+            <th>Motivo</th>
+            <th>Prot. Num.</th>
+            <th>Prot. Data</th>
+        </thead>
+        
+        <?php foreach ( $me->storicoProvvedimenti() as $prov ) { ?>
+        <tr<?php if ($prov->fine >= time() || $prov->fine == 0 ) { ?> class="success"<?php } ?>>
+        <td>
+            <?php if ($prov->fine >= time() || $prov->fine == 0 ) { ?>
+            Attuale
+            <?php } else { ?>
+            Passato
+            <?php } ?>
+        </td>
+        
+        <td>
+            <?= $prov->comitato()->nomeCompleto(); ?>
+        </td>
+                
+        <td>
+            <i class="icon-calendar muted"></i>
+            <?php echo $app->inizio()->inTesto(false); ?>
+        </td>
+        
+        <td>
+            <?php if ($app->fine) { ?>
+            <i class="icon-time muted"></i>
+            <?php echo $app->fine()->inTesto(false); ?>
+            <?php } else { ?>
+            <i class="icon-question-sign muted"></i>
+            Indeterminato
+            <?php } ?>
+        </td>
+
+        <td>
+            <?= $prov->motivo; ?>
+        </td>
+
+        <td>
+            <?= $prov->motivo; ?>
+        </td>
+
+        <td>
+            <i class="icon-calendar muted"></i>
+            <?= date('d/m/Y', $prov->protData); ?>
+        </td>
+
+    </tr>
+    <?php } ?>
+    
+</table>
+</div>
+<?php } ?>
+
 </div>
 </div>
