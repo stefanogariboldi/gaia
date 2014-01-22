@@ -288,13 +288,18 @@ class Utente extends Persona {
             ['volontario',  $this->id]
         ], 'inizio ASC');
         if ( !$p ) { return false; }
-        $r = [];
         foreach ($p as $_p){
-            if($_p->validaPerAnzianita()) {
-                $r[] = $_p;
+            if ($this->stato == VOLONTARIO) {
+                if($_p->validaPerAnzianita()) {
+                    return $_p;
+                }
+            } elseif ($this->stato == PERSONA) {
+                if($_p->validaPerAnzianita(PERSONA)) {
+                    return $_p;
+                }
             }
         }
-        return $r[0];
+        return null;
     }
 
     public function ultimaAppartenenza($stato = MEMBRO_VOLONTARIO) {
@@ -356,6 +361,15 @@ class Utente extends Persona {
         return $n;
     }
     
+    public function numOrdinariDiCompetenza() {
+        $n = 0;
+        $comitati = $this->comitatiApp([ APP_SOCI, APP_PRESIDENTE, APP_CO, APP_OBIETTIVO ]);
+        foreach($comitati as $_c) {
+                $n += $_c->numMembriOrdinari();          
+        }
+        return $n;
+    }
+
     public function presiede( $comitato = null ) {
         if ( $comitato ) {
             if($comitato->unPresidente() == $this->id) {
@@ -865,13 +879,15 @@ class Utente extends Persona {
         }
     }
     
-    public function comitatiAreeDiCompetenza() {
+    public function comitatiAreeDiCompetenza($soloLocali = false) {
         $a = $this->areeDiCompetenza(null, true);
         $r = [];
-        foreach ($a as $ia) {
-            $comitato = $ia->comitato();
-            $r[] = $comitato;
-            if ($comitato instanceof Locale) {
+        foreach ($a as $_a) {
+            $comitato = $_a->comitato();
+            if(!$soloLocali || $comitato instanceof Comitato) {
+                $r[] = $comitato;
+            }
+            if (!$comitato instanceof Comitato) {
                 $r = array_merge($r, $comitato->estensione());
             }
         }
@@ -892,6 +908,15 @@ class Utente extends Persona {
             ['stato',       ATT_STATO_BOZZA]
         ]);
     }
+
+    public function comitatiAttivitaReferenziate() {
+        $a = $this->attivitaReferenziate();
+        $r = [];
+        foreach($a as $_a) {
+            $r = array_merge($r, $_a->comitato()->estensione());
+        }
+        return array_unique($r);
+    }
     
     public function attivitaAreeDiCompetenza() {
         $r = [];
@@ -908,6 +933,39 @@ class Utente extends Persona {
             $a = array_merge($a, $c->attivita());
         }
         return array_unique($a);
+    }
+
+    /**
+     * Restituisce l'elenco dei corsi base che gestisco
+     * @return CorsoBase    elenco dei corsi gestiti 
+     */
+    public function corsiBaseDiGestione() {
+        $a = $this->corsiBaseDiretti();
+        foreach ( $this->comitatiApp([APP_PRESIDENTE, APP_FORMAZIONE], false) as $c ) {
+            $a = array_merge($a, $c->CorsiBase());
+        }
+        return array_unique($a);
+    }
+
+    /**
+     * Restituisce l'elenco dei corsi base di cui sono direttore
+     * @return CorsoBase    elenco dei corsi diretti 
+     */
+    public function corsiBaseDiretti() {
+        return CorsoBase::filtra([
+            ['direttore', $this->id]
+            ]);
+    }
+
+    /**
+     * Restituisce l'elenco dei corsi base di cui sono direttore e devo completare
+     * @return CorsoBase    elenco dei corsi diretti da completare
+     */
+    public function corsiBaseDirettiDaCompletare() {
+        return CorsoBase::filtra([
+            ['direttore',   $this->id],
+            ['stato',       CORSO_S_DACOMPLETARE]
+        ]);
     }
     
     public function cellulare() {
@@ -994,6 +1052,17 @@ class Utente extends Persona {
         }
         return $q;
     }
+
+    public function quota($anno = null) {
+        if (!$anno)
+            $anno = date('Y');
+        $q = $this->quote();
+        foreach ($q as $_q) {
+            if ($_q->anno == $anno)
+                return $_q;
+        }
+        return false;
+    } 
 
     public static function elencoId() {
          global $db;
@@ -1127,7 +1196,12 @@ class Utente extends Persona {
                             );
         $comitatiGestiti = array_unique($comitatiGestiti);
         
-        $c = $this->unComitato(MEMBRO_PENDENTE);
+        if ($this->stato == PERSONA) {
+            $c = $this->unComitato(MEMBRO_ORDINARIO);
+        } else {
+            $c = $this->unComitato(MEMBRO_PENDENTE);
+        }
+        
         if($c) {
             if(in_array($c->locale(), $comitatiGestiti) 
             || in_array($c, $comitatiGestiti)) {
@@ -1176,7 +1250,8 @@ class Utente extends Persona {
      * @param $motivo, motivazione di dimissione
      * @param $info default NULL, informazioni aggiuntive sulla dimissione
      */
-    public function dimettiVolontario($motivo, $info=NULL, $chi, $quando) {
+    public function dimettiVolontario($motivo, $info=NULL, $chi) {
+        $quando = time();
         $v = $this->volontario();
         $attuale = $v->appartenenzaAttuale();
         $comitato = $attuale->comitato();
@@ -1297,5 +1372,50 @@ class Utente extends Persona {
         $v->stato = PERSONA;
         $v->admin=null;
         return;
+    }
+
+    public function ordinario() {
+        $r = [];
+        foreach ( Appartenenza::filtra([
+            ['volontario',  $this->id],
+            ['stato',       MEMBRO_ORDINARIO]
+        ]) as $a ) {
+            if ( !$a->attuale() ) { continue; }
+            $r[] = $a;
+        }
+        return $r;
+    }
+
+    public function ordinarioDimesso() {
+        $r = [];
+        foreach ( Appartenenza::filtra([
+            ['volontario',  $this->id],
+            ['stato',       MEMBRO_ORDINARIO_DIMESSO]
+        ]) as $a ) {
+            if ( !$a->attuale() ) { continue; }
+            $r[] = $a;
+        }
+        return $r;
+    }
+
+    /**
+     * Dice se un socio è benemerito per un dato anno
+     * @param $anno int     Anno su cui voglio fare il controllo
+     * @return Quota|bool   Quota se benemerito, false altrimenti
+     */
+    public function benemerito($anno = null) {
+        if (!$anno)
+            $anno = date('Y');
+        $q = Quota::filtra([
+            ['anno', $anno],
+            ['benemerito', BENEMERITO_SI]
+            ]);
+
+        foreach ($q as $_q) {
+            if ($_q->volontario()->id == $this->id)
+                return $_q;
+        }
+        return false;
+
     }
 }

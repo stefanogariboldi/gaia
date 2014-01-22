@@ -76,6 +76,7 @@ class Appartenenza extends Entita {
             $this->timestamp = time();
             $this->stato     = MEMBRO_VOLONTARIO;
             $this->conferma  = $v->id; 
+            $this->volontario()->stato = VOLONTARIO;
             return;
         }
 
@@ -84,9 +85,15 @@ class Appartenenza extends Entita {
          * membri trasferiti o quelle dei membri volontari
          * @return bool True se valida, False altrimenti
          */
-        public function validaPerAnzianita() {
-            if($this->stato == MEMBRO_VOLONTARIO || $this->statp == MEMBRO_TRASFERITO) {
-                return true;
+        public function validaPerAnzianita($stato = VOLONTARIO) {
+            if ($stato == VOLONTARIO) {
+                if($this->stato == MEMBRO_VOLONTARIO || $this->stato == MEMBRO_TRASFERITO) {
+                    return true;
+                }
+            } elseif ($stato == PERSONA) {
+                if($this->stato == MEMBRO_ORDINARIO) {
+                    return true;
+                } 
             }
             return false;
         }

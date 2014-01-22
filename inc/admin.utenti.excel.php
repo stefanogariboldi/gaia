@@ -4,11 +4,11 @@
  * ©2013 Croce Rossa Italiana
  */
 
-paginaApp([APP_SOCI , APP_PRESIDENTE,APP_CO, APP_OBIETTIVO]);
+paginaApp([APP_SOCI , APP_PRESIDENTE, APP_CO , APP_OBIETTIVO]);
 
 $zip = new Zip();
 
-foreach ( $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE,APP_CO, APP_OBIETTIVO ]) as $c ) {
+foreach ( $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE , APP_CO , APP_OBIETTIVO ]) as $c ) {
 
     $excel = new Excel();
     $i=0;
@@ -32,6 +32,26 @@ foreach ( $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE,APP_CO, APP_OBIETTIVO ]) 
             'Numero Protocollo',
             'Data Protocollo',
             'Motivazione'
+            ]);
+    }elseif(isset($_GET['mass'])){
+        $excel->intestazione([
+            'N.',
+            'Nome',
+            'Cognome',
+            'Data Nascita',
+            'Luogo Nascita',
+            'Provincia Nascita',
+            'C. Fiscale',
+            'eMail',
+            'eMail Servizio',
+            'Cellulare',
+            'Cell. Servizio',
+            'Titolo',
+            'Conseguimento',
+            'Luogo',
+            'Scadenza',
+            'Codice',
+            'Data ingresso CRI'
             ]);
     }else{
         $excel->intestazione([
@@ -218,6 +238,8 @@ foreach ( $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE,APP_CO, APP_OBIETTIVO ]) 
         $f= new Titolo($f);
         $volontari =  $c->ricercaMembriTitoli([$f]);
         foreach($volontari as $v){
+            $titolo = TitoloPersonale::filtra([['volontario', $v],['titolo', $f]]);
+            $titolo = $titolo[0];
             $i++; 
             $excel->aggiungiRiga([
                 $i,
@@ -227,15 +249,15 @@ foreach ( $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE,APP_CO, APP_OBIETTIVO ]) 
                 $v->comuneNascita,
                 $v->provinciaNascita,
                 $v->codiceFiscale,
-                $v->indirizzo,
-                $v->civico,
-                $v->comuneResidenza,
-                $v->CAPResidenza,
-                $v->provinciaResidenza,
                 $v->email,
                 $v->emailServizio,
                 $v->cellulare,
                 $v->cellulareServizio,
+                $f->nome,
+                $titolo->inizio()->format("d/m/Y"),
+                $titolo->luogo,
+                $titolo->fine()->format("d/m/Y"),
+                $titolo->codice,
                 $v->ingresso()->format("d/m/Y")
                 ]);
         }
@@ -356,6 +378,56 @@ foreach ( $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE,APP_CO, APP_OBIETTIVO ]) 
 
         }
         $excel->genera("Elenco Soci {$c->nome}.xls");
+    }elseif(isset($_GET['ordinari'])){
+        foreach ( $c->membriOrdinari() as $v ) {
+            $i++;    
+            $excel->aggiungiRiga([
+                $i,
+                $v->nome,
+                $v->cognome,
+                date('d/m/Y', $v->dataNascita),
+                $v->comuneNascita,
+                $v->provinciaNascita,
+                $v->codiceFiscale,
+                $v->indirizzo,
+                $v->civico,
+                $v->comuneResidenza,
+                $v->CAPResidenza,
+                $v->provinciaResidenza,
+                $v->email,
+                $v->emailServizio,
+                $v->cellulare,
+                $v->cellulareServizio,
+                $v->ingresso()->format("d/m/Y")
+                ]);
+
+        }
+        $excel->genera("Elenco Soci Ordinari {$c->nome}.xls");
+    }elseif(isset($_GET['ordinaridimessi'])){
+        foreach ( $c->membriOrdinariDimessi() as $v ) {
+            $i++;    
+            $excel->aggiungiRiga([
+                $i,
+                $v->nome,
+                $v->cognome,
+                date('d/m/Y', $v->dataNascita),
+                $v->comuneNascita,
+                $v->provinciaNascita,
+                $v->codiceFiscale,
+                $v->indirizzo,
+                $v->civico,
+                $v->comuneResidenza,
+                $v->CAPResidenza,
+                $v->provinciaResidenza,
+                $v->email,
+                $v->emailServizio,
+                $v->cellulare,
+                $v->cellulareServizio,
+                $v->ingresso()->format("d/m/Y")
+                ]);
+
+        }
+        $excel->genera("Elenco Soci Ordinari Dimessi {$c->nome}.xls");
     }else{
         foreach ( $c->membriAttuali() as $v ) {
             $i++;    
@@ -409,6 +481,10 @@ if(isset($_GET['dimessi'])){
  $zip->comprimi("Volontari in estensione.zip"); 
 }elseif(isset($_GET['soci'])){
  $zip->comprimi("Elenco soci.zip"); 
+}elseif(isset($_GET['ordinari'])){
+ $zip->comprimi("Elenco soci ordinari.zip"); 
+}elseif(isset($_GET['ordinaridimessi'])){
+ $zip->comprimi("Elenco soci ordinari dimessi.zip"); 
 }else{
     $zip->comprimi("Anagrafica_volontari.zip");
 }

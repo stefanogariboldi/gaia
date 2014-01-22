@@ -23,6 +23,12 @@ paginaPrivata();
                 La tua riserva è stata terminata con successo.
             </div>
         <?php } ?>
+        <?php if ( isset($_GET['err']) ) { ?>
+        <div class="alert alert-danger">
+            <i class="icon-warning-sign"></i> <strong>Qualcosa non ha funzionato</strong>.<br />
+            L'operazione che hai tentato di eseguire non è andata a buon fine, per favore riprova.
+        </div>
+        <?php } ?>
         <div class="row-fluid">
             <h2>
                 <i class="icon-time muted"></i>
@@ -325,7 +331,7 @@ paginaPrivata();
                                     Indeterminato
                                 <?php } ?>
                             </td>
-
+                            
                             <td>
                                 <?= $prov->protNumero; ?>
                             </td>
@@ -345,5 +351,44 @@ paginaPrivata();
                 </table>
             </div>
         <?php } ?>
+
+    <?php if ( $me->quote() ){ ?>
+    <div class="row-fluid">
+        <h2>
+            <i class="icon-money muted"></i>
+            Riepilogo Quote
+        </h2>
+    </div>
+    
+    <div class="row-fluid">
+        
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>N.</th>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Comitato</th>
+                <th>Data versamento</th>
+                <th>Quota</th>
+                <th>Azioni</th>
+            </thead>
+            <?php foreach ( $me->quote() as $_q ){ ?>
+            <tr>
+                <td><?= $_q->id; ?></td>
+                <td><?= $_q->volontario()->nome; ?></td>
+                <td><?= $_q->volontario()->cognome; ?></td>
+                <td><?= $_q->comitato()->nomeCompleto(); ?></td>
+                <td><?= date('d/m/Y', $_q->timestamp); ?></td>
+                <td><?= $_q->quota ,"€"; ?></td>
+                <td>
+                    <a class="btn btn-small btn-info" href="?p=utente.quote.ricevuta&id=<?= $_q->id; ?>" title="Visualizza ricevuta">
+                        <i class="icon-paperclip"></i> Ricevuta
+                    </a>
+                </td>
+            </tr>
+            <?php } ?>
+        </table>
+    </div>
+    <?php } ?>
     </div>
 </div>
