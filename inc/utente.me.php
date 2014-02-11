@@ -55,10 +55,11 @@ if ($consenso && !$me->email ) { redirect('nuovaAnagraficaContatti'); }
 if ($consenso && !$me->password && $sessione->tipoRegistrazione = VOLONTARIO ) { redirect('nuovaAnagraficaAccesso'); }
 
 if ($consenso) {
-  foreach ( $me->comitatiPresidenzianti() as $comitato ) {
-      $p = $comitato->unPresidente();
-      if ( $p && $p == $me->id && !$comitato->haPosizione() && !$comitato->principale ) {
-          redirect('presidente.wizard&forzato&oid=' . $comitato->oid());
+  $d = $me->delegazioneAttuale();
+  if ($d && $d->applicazione == APP_PRESIDENTE) {
+      $p = $d->comitato()->unPresidente();
+      if ( $p && $p == $me->id && !$d->comitato()->haPosizione() && !$d->comitato()->principale ) {
+          redirect('presidente.wizard&forzato&oid=' . $d->comitato()->oid());
       }
   }
 }
@@ -66,7 +67,7 @@ if ($consenso) {
 if (!$sessione->rimandaPrivatizzazione && $consenso) {
   foreach($me->comitatiPresidenzianti() as $comitato) {
     $p = $comitato->unPresidente();
-    if ( $p && $p == $me->id && (!$comitato->cf() || (!$comitato->piva()))) { ?>
+    if ( $p && $p == $me->id && !$comitato->cf()) { ?>
       <div class="modal fade automodal">
         <div class="modal-header">
           <h3 class="text-success"><i class="icon-cog"></i> Privatizzazione della CRI!</h3>

@@ -12,6 +12,9 @@ $v = $_GET['id'];
 $v = Volontario::id($v);
 
 proteggiDatiSensibili($v, [APP_SOCI , APP_PRESIDENTE]);
+if (!$v->modificabileDa($me)) {
+  redirect('presidente.utenti&nonpuoi');
+}
 
 ?>
 <div class="row-fluid">
@@ -45,7 +48,7 @@ proteggiDatiSensibili($v, [APP_SOCI , APP_PRESIDENTE]);
                 <div class="control-group">
                     <label class="control-label" for="info">Informazioni aggiuntive </label>
                     <div class="controls">
-                        <input class="span8" type="text" name="info" id="info" placeholder="es.: Provvedimento di radiazione n. 134 del 12/12/2013" >
+                        <input class="span8" type="text" name="info" id="info" placeholder="es.: Provvedimento di espulsione n. 134 del 12/12/2013" >
                     </div>
                 </div>
                 <div class="control-group">

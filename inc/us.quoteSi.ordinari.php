@@ -112,7 +112,7 @@ paginaApp([APP_SOCI , APP_PRESIDENTE]);
             <i class="icon-thumbs-up-alt"></i> Attualmente sono presenti<br />
             <span class="quote_contatore"> {{benemeriti}}</span>
             <br />
-            <span class="aspiranti_descrizione">BENEMERITI</span>
+            <span class="aspiranti_descrizione">SOSTENITORI</span>
         </div>
     </div>
 </div>
@@ -121,6 +121,15 @@ paginaApp([APP_SOCI , APP_PRESIDENTE]);
 
 <div class="row-fluid">
    <div class="span12">
+    <div class="btn-group btn-group-vertical span12">
+            <?php if ( count($me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ])) > 1 ) { ?>
+                <a href="?p=admin.utenti.excel&quotesiordinari&anno=<?= $anno; ?>" class="btn btn-block btn-inverse" data-attendere="Generazione e compressione in corso...">
+                    <i class="icon-download"></i>
+                    <strong>Ufficio Soci</strong> &mdash; Scarica tutti i fogli dei volontari che hanno versato la quota in un archivio zip.
+                </a>
+           <?php } ?>
+           <hr />
+       </div>
        <table class="table table-striped table-bordered table-condensed" id="tabellaUtenti">
             <thead>
                 <th>Quota</th>
@@ -152,7 +161,7 @@ paginaApp([APP_SOCI , APP_PRESIDENTE]);
                         <?php echo count($t); ?>
                     </span>
                     <a class="btn btn-small pull-right" 
-                       href="?p=presidente.utenti.excel&comitato=<?php echo $comitato->id; ?>&quotesi"
+                       href="?p=presidente.utenti.excel&anno=<?= $anno; ?>&comitato=<?php echo $comitato->id; ?>&quotesiordinari"
                        data-attendere="Generazione...">
                             <i class="icon-download"></i> scarica come foglio excel
                     </a>
@@ -179,7 +188,7 @@ paginaApp([APP_SOCI , APP_PRESIDENTE]);
                             if ($q->benemerita()) { 
                                 $ben++;
                                 echo('€ ' . soldi($q->quota)); ?>
-                                <i class="icon-thumbs-up-alt"></i> Benemerito
+                                <i class="icon-thumbs-up-alt"></i> Sostenitore
                             <?php    } else { 
                                 echo('€ ' . soldi($q->quota));
                              }?>

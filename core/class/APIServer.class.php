@@ -162,8 +162,8 @@ class APIServer {
             if ( !$searchPuoPart[$idAttivita] ) {
                 continue;
             }
+            $geoAttivita = GeoPolitica::daOid($attivita->comitato);
             if ( $this->sessione->utente ) {
-                $geoAttivita = GeoPolitica::daOid($attivita->comitato);
                 if ( $geoAttivita->contiene($mioGeoComitato) ) {
                     $colore = $conf['attivita']['colore_mie'];
                     if ( $turno->scoperto() ) {
@@ -216,6 +216,16 @@ class APIServer {
             'turni'     =>  $t
         ];
     }
+
+    public function api_turno_partecipa() {
+        $this->richiedi(['id']);
+        $this->richiediLogin();
+        $me = $this->sessione->utente();
+        $t = Turno::id($this->par['id']);
+        return [
+            'ok' => $t->chiediPartecipazione($me)
+        ];
+    }
     
     public function api_geocoding() {
         $this->richiedi(['query']);
@@ -250,7 +260,6 @@ class APIServer {
                 'attuale'   =>  $app->attuale()
             ];
         }
-            
         return $r;
     }
         
@@ -347,17 +356,23 @@ class APIServer {
         }
 
         $me = $this->sessione->utente();
-        $com = array_merge(
-            // Dominio di ricerca
-            $me->comitatiApp([
-                APP_PRESIDENTE,
-                APP_SOCI,
-                APP_OBIETTIVO
-            ]),
-            $me->comitatiAttivitaReferenziate(),
-            $me->comitatiAreeDiCompetenza(true)
-        );
-        $r->comitati = array_unique($com);
+
+        // versione modificata per #867
+        if ($this->par['comitati']) {
+            $g = GeoPolitica::daOid($this->par['comitati']);
+            // bisogna avere permessi di lettura sul ramo
+            if ( !$me->puoLeggereDati($g) )
+                throw new Errore(1016);
+            
+            $com = $g->estensione();
+        } else {
+            $com = $me->comitatiApp([
+                    APP_PRESIDENTE,
+                    APP_SOCI,
+                    APP_OBIETTIVO
+            ]);
+        }
+        $r->comitati = $com;
 
         if ( $this->par['query'] ) {
             $r->query = $this->par['query'];

@@ -60,7 +60,7 @@ if ( $_POST['protData'] ) {
 
 if ($_POST['inputTipo'] == PROVV_ESPULSIONE){
     //dimissione automatica del volontario
-    $v->dimettiVolontario(DIM_RADIAZIONE, $m, $me, $p->inizio);
+    $v->dimettiVolontario(DIM_ESPULSIONE, $m, $me, $p->inizio);
 }
 
 redirect('us.dash&provok');

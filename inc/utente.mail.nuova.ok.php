@@ -68,8 +68,24 @@ foreach($me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE, APP_OBIETTIVO ]) as $elenc
         } else {
             $comitato = 'nessun comitato assegnato o volontario in attesa di conferma';
         }
-        $m->_BROSWER = $_SERVER['HTTP_USER_AGENT'] . "\n\n";
         $m->_APP = $comitato;
+        $d = $me->delegazioneAttuale();
+        if($d) {
+            $g = GeoPolitica::daOid($d->comitato);
+            $nome = "{$g->nome}";
+            if ($g->_estensione() == EST_UNITA) {
+                $nome = "Unità {$g->nome}";
+            }
+            if ($d->applicazione == APP_OBIETTIVO) {
+                $ruolo = "Delegato {$conf['nomiobiettivi'][$d->dominio]}: {$nome}";   
+            } else {
+                $ruolo = "{$conf['applicazioni'][$d->applicazione]}: {$nome}";    
+            }
+            $m->_DELEGA = $ruolo;
+        } else {
+            $m->_DELEGA = "Il volontario non ha deleghe o non ne sta usando nessuna";
+        }
+        $m->_BROSWER = $_SERVER['HTTP_USER_AGENT'] . "\n\n";
         //inserisco i dati del volontari per cui è richiesta assistenza
         $u = Utente::id($_POST['inputVolontario']);
         $m->_VSTATO = $conf['statoPersona'][$u->stato];
@@ -101,6 +117,22 @@ foreach($me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE, APP_OBIETTIVO ]) as $elenc
         $comitato = 'nessun comitato assegnato';
     }
     $m->_APP = $comitato;
+    $d = $me->delegazioneAttuale();
+    if($d) {
+        $g = GeoPolitica::daOid($d->comitato);
+        $nome = "{$g->nome}";
+        if ($g->_estensione() == EST_UNITA) {
+            $nome = "Unità {$g->nome}";
+        }
+        if ($d->applicazione == APP_OBIETTIVO) {
+            $ruolo = "Delegato {$conf['nomiobiettivi'][$d->dominio]}: {$nome}";   
+        } else {
+            $ruolo = "{$conf['applicazioni'][$d->applicazione]}: {$nome}";    
+        }
+        $m->_DELEGA = $ruolo;
+    } else {
+        $m->_DELEGA = "Il volontario non ha deleghe o non ne sta usando nessuna";
+    }
     $m->_BROSWER = $_SERVER['HTTP_USER_AGENT'] . "\n\n";
     $m->invia();
     redirect('utente.me&suppok');    
@@ -135,9 +167,18 @@ $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE, APP_OBIETTIVO ]);
          }
 
 }elseif (isset($_GET['comquoteno'])) {
+    $questanno = $anno = date('Y');
+    if (!isset($_GET['anno'])) {
+        $anno = $questanno;
+    } else {
+        $anno = $_GET['anno'];
+        if ($anno > (int) $questanno) {
+            redirect('us.quoteNo');
+        }
+    }
 $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
         foreach($elenco as $comitato) {
-            $t = $comitato->quoteNo();
+            $t = $comitato->quoteNo($anno);
             foreach($t as $_t){
                 $m = new Email('mailTestolibero', ''.$oggetto);
                 $m->da = $me; 
@@ -146,10 +187,19 @@ $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
                 $m->invia();
          }
      }
-}elseif (isset($_GET['comquotesi'])) {
+}elseif (isset($_GET['comquotenoordinari'])) {
+    $questanno = $anno = date('Y');
+    if (!isset($_GET['anno'])) {
+        $anno = $questanno;
+    } else {
+        $anno = $_GET['anno'];
+        if ($anno > (int) $questanno) {
+            redirect('us.quoteNo');
+        }
+    }
 $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
         foreach($elenco as $comitato) {
-            $t = $comitato->quoteSi();
+            $t = $comitato->quoteNo($anno, MEMBRO_ORDINARIO);
             foreach($t as $_t){
                 $m = new Email('mailTestolibero', ''.$oggetto);
                 $m->da = $me; 
@@ -159,45 +209,63 @@ $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
          }
      }
 }elseif (isset($_GET['unitquoteno'])) {
-        $c = $_GET['id'];
-        $c = Comitato::id($c);
-        $t = $c->quoteNo();
-        foreach($t as $_t){
-            $m = new Email('mailTestolibero', ''.$oggetto);
-            $m->da = $me; 
-            $m->a = $_t;
-            $m->_TESTO = $testo;
-            $m->invia();
-         }
+    $questanno = $anno = date('Y');
+    if (!isset($_GET['anno'])) {
+        $anno = $questanno;
+    } else {
+        $anno = $_GET['anno'];
+        if ($anno > (int) $questanno) {
+            redirect('us.quoteNo');
+        }
+    }
+    $c = $_GET['id'];
+    $c = Comitato::id($c);
+    $t = $c->quoteNo($anno);
+    foreach($t as $_t){
+        $m = new Email('mailTestolibero', ''.$oggetto);
+        $m->da = $me; 
+        $m->a = $_t;
+        $m->_TESTO = $testo;
+        $m->invia();
+     }
 
-}elseif (isset($_GET['unitquotesi'])) {
-        $c = $_GET['id'];
-        $c = Comitato::id($c);
-        $t = $c->quoteNo();
-        foreach($t as $_t){
-            $m = new Email('mailTestolibero', ''.$oggetto);
-            $m->da = $me; 
-            $m->a = $_t;
-            $m->_TESTO = $testo;
-            $m->invia();
-         }
+}elseif (isset($_GET['unitquotenoordinari'])) {
+    $questanno = $anno = date('Y');
+    if (!isset($_GET['anno'])) {
+        $anno = $questanno;
+    } else {
+        $anno = $_GET['anno'];
+        if ($anno > (int) $questanno) {
+            redirect('us.quoteNo');
+        }
+    }
+    $c = $_GET['id'];
+    $c = Comitato::id($c);
+    $t = $c->quoteNo($anno, MEMBRO_ORDINARIO);
+    foreach($t as $_t){
+        $m = new Email('mailTestolibero', ''.$oggetto);
+        $m->da = $me; 
+        $m->a = $_t;
+        $m->_TESTO = $testo;
+        $m->invia();
+     }
 
 }elseif (isset($_GET['comeleatt'])) {
-$elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
-        foreach($elenco as $comitato) {
-            $time = $_GET['time'];
-            $time = DT::daTimestamp($time);
-            $t = $comitato->elettoriAttivi($time);
-            foreach($t as $_t){
-                $m = new Email('mailTestolibero', ''.$oggetto);
-                $m->da = $me; 
-                $m->a = $_t;
-                $m->_TESTO = $testo;
-                $m->invia();
-         }
-     }
+    $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
+    foreach($elenco as $comitato) {
+        $time = $_GET['time'];
+        $time = DT::daTimestamp($time);
+        $t = $comitato->elettoriAttivi($time);
+        foreach($t as $_t){
+            $m = new Email('mailTestolibero', ''.$oggetto);
+            $m->da = $me; 
+            $m->a = $_t;
+            $m->_TESTO = $testo;
+            $m->invia();
+        }
+    }
 }elseif (isset($_GET['comelepass'])) {
-$elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
+    $elenco = $me->comitatiApp ([ APP_SOCI, APP_PRESIDENTE ]);
         foreach($elenco as $comitato) {
             $time = $_GET['time'];
             $time = DT::daTimestamp($time);

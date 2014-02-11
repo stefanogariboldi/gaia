@@ -74,6 +74,16 @@ class Turno extends Entita {
     public function partecipa(Utente $v) {
         return (bool) $this->partecipazione($v);
     }
+
+    public function chiediPartecipazione(Utente $v) {
+        if ( !$this->puoRichiederePartecipazione($v) )
+            return false;
+        $p = new Partecipazione;
+        $p->turno       = $this;
+        $p->volontario  = $v;
+        $p->generaAutorizzazioni();
+        return true;
+    }
         
     public static function neltempo(DT $inizio, DT $fine) {
         global $db;
