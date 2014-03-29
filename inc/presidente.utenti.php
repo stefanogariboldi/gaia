@@ -92,6 +92,9 @@ menuElenchiVolontari(
                 <a class="btn btn-small btn-danger" href="?p=admin.admin.nuovo&id={id}" title="Nomina Admin">
                     <i class="icon-magic"></i>
                 </a>
+                <a class="btn btn-small btn-info" href="?p=us.tesserini.p&id={id}" title="Tessrino">
+                    <i class="icon-barcode"></i>
+                </a>
                 <?php } ?>
             </div>
         </div>
